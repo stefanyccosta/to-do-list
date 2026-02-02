@@ -1,39 +1,81 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Plus, List, Check, CircleAlert } from "lucide-react";
+import {
+  Plus,
+  List,
+  Check,
+  CircleAlert,
+  SquarePen,
+  Trash,
+  ListCheck,
+  Sigma,
+} from "lucide-react";
 
 const Home = () => {
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg">
-        <CardContent className="flex gap-2">
+        <CardHeader className="flex gap-2">
           <Input placeholder="Adicionar tarefa" />
           <Button className="cursor-pointer">
             {" "}
-            <Plus /> Cadastrar
+            <Plus /> Adicionar
           </Button>
+        </CardHeader>
+        <CardContent>
+          <Separator className="mb-4" />
+          <div className="flex gap-2">
+            <Badge className="cursor-pointer" variant={"default"}>
+              {" "}
+              <List />
+              Todas
+            </Badge>
+            <Badge className="cursor-pointer" variant={"outline"}>
+              {" "}
+              <CircleAlert />
+              Não finalizadas
+            </Badge>
+            <Badge className="cursor-pointer" variant={"outline"}>
+              {" "}
+              <Check />
+              Concluídas
+            </Badge>
+          </div>
+          <div className=" mt-4 border-b">
+            <div className="h-14 flex justify-between items-center border-t">
+              <div className="w-1 h-full bg-green-300"></div>
+              <p className="flex-1 px-2 text-sm">Estudar React </p>
+              <div className="flex items-center gap-4">
+                <SquarePen size={16} className="cursor-pointer" />
+                <Trash size={16} className="cursor-pointer" />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-between mt-4">
+            <div className="flex gap-2 items-center">
+              <ListCheck size={20} />
+              <p className="text-xs">Tarefas concluídas (3/3)</p>
+            </div>
+            <Button className="text-xs h-7 cursor-pointer" variant={"outline"}>
+              {" "}
+              <Trash /> Limpar tarefas concuidas
+            </Button>
+          </div>
+          <div className="h-2 w-full bg-gray-100 mt-4 rounded-md">
+            <div
+              className="h-full  bg-blue-500 rounded-md"
+              style={{ width: "50%" }}
+            ></div>
+            <div className="flex justify-end items-center mt-2 gap-2">
+              <Sigma size={16} />
+              <p className="text-xs">3 tarefas no total</p>
+            </div>
+          </div>
         </CardContent>
-        <Separator />
-        <div className="flex gap-2">
-          <Badge className="cursor-pointer">
-            {" "}
-            <List />
-            Todas
-          </Badge>
-          <Badge className="cursor-pointer">
-            {" "}
-            <CircleAlert />
-            Não finalizadas
-          </Badge>
-          <Badge className="cursor-pointer">
-            {" "}
-            <Check />
-            Concluídas
-          </Badge>
-        </div>
+        <div></div>
       </Card>
     </main>
   );
