@@ -1,6 +1,23 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -13,6 +30,7 @@ import {
   ListCheck,
   Sigma,
 } from "lucide-react";
+import { Dialog } from "@/components/ui/dialog";
 
 const Home = () => {
   return (
@@ -49,20 +67,52 @@ const Home = () => {
               <div className="w-1 h-full bg-green-300"></div>
               <p className="flex-1 px-2 text-sm">Estudar React </p>
               <div className="flex items-center gap-4">
-                <SquarePen size={16} className="cursor-pointer" />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <SquarePen size={16} className="cursor-pointer" />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Editar tarefa</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex gap-2">
+                      <Input placeholder="Editar tarefa" />
+                      <Button className="cursor-pointer"> Editar</Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 <Trash size={16} className="cursor-pointer" />
               </div>
             </div>
           </div>
+
           <div className="flex justify-between mt-4">
             <div className="flex gap-2 items-center">
               <ListCheck size={20} />
               <p className="text-xs">Tarefas concluídas (3/3)</p>
             </div>
-            <Button className="text-xs h-7 cursor-pointer" variant={"outline"}>
-              {" "}
-              <Trash /> Limpar tarefas concuidas
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  className="text-xs h-7 cursor-pointer"
+                  variant={"outline"}
+                >
+                  {" "}
+                  <Trash /> Limpar tarefas concuidas
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Tem certeza qur deseja excluir x itens?
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction>Sim</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
           <div className="h-2 w-full bg-gray-100 mt-4 rounded-md">
             <div
