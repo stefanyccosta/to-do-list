@@ -11,13 +11,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -25,12 +18,12 @@ import {
   List,
   Check,
   CircleAlert,
-  SquarePen,
   Trash,
   ListCheck,
   Sigma,
 } from "lucide-react";
-import { Dialog } from "@/components/ui/dialog";
+
+import EditTask from "@/components/edit-task";
 
 const Home = () => {
   return (
@@ -66,21 +59,8 @@ const Home = () => {
             <div className="h-14 flex justify-between items-center border-t">
               <div className="w-1 h-full bg-green-300"></div>
               <p className="flex-1 px-2 text-sm">Estudar React </p>
-              <div className="flex items-center gap-4">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <SquarePen size={16} className="cursor-pointer" />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Editar tarefa</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex gap-2">
-                      <Input placeholder="Editar tarefa" />
-                      <Button className="cursor-pointer"> Editar</Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+              <div className="flex items-center gap-2">
+                <EditTask />
                 <Trash size={16} className="cursor-pointer" />
               </div>
             </div>
@@ -104,7 +84,7 @@ const Home = () => {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Tem certeza qur deseja excluir x itens?
+                    Tem certeza que deseja excluir x itens?
                   </AlertDialogTitle>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
