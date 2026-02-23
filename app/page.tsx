@@ -1,3 +1,4 @@
+"use client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,8 +25,20 @@ import {
 } from "lucide-react";
 
 import EditTask from "@/components/edit-task";
+import { getTasks } from "@/actions/get-tasks-from-db";
+import { useEffect, useState } from "react";
+import { Tasks } from "@/lib/generated/prisma/client";
 
 const Home = () => {
+  const [taskList, setTaskList] = useState<Tasks[]>([]);
+  const handleGetTasks = async () => {
+    const tasks = await getTasks();
+    if (!tasks) return;
+    setTaskList(tasks);
+  };
+  useEffect(() => {
+    handleGetTasks();
+  }, []);
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg">
@@ -36,6 +49,7 @@ const Home = () => {
             <Plus /> Adicionar
           </Button>
         </CardHeader>
+        <Button onClick={handleGetTasks}>Buscar Tarefas </Button>
         <CardContent>
           <Separator className="mb-4" />
           <div className="flex gap-2">
@@ -56,14 +70,19 @@ const Home = () => {
             </Badge>
           </div>
           <div className=" mt-4 border-b">
-            <div className="h-14 flex justify-between items-center border-t">
-              <div className="w-1 h-full bg-green-300"></div>
-              <p className="flex-1 px-2 text-sm">Estudar React </p>
-              <div className="flex items-center gap-2">
-                <EditTask />
-                <Trash size={16} className="cursor-pointer" />
+            {taskList.map((task) => (
+              <div
+                className="h-14 flex justify-between items-center border-t"
+                key={task.id}
+              >
+                <div className="w-1 h-full bg-green-300"></div>
+                <p className="flex-1 px-2 text-sm"> Estudar React</p>
+                <div className="flex items-center gap-2">
+                  <EditTask />
+                  <Trash size={16} className="cursor-pointer" />
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
           <div className="flex justify-between mt-4">
