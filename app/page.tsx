@@ -29,10 +29,12 @@ import { getTasks } from "@/actions/get-tasks-from-db";
 import { useEffect, useState } from "react";
 import { Tasks } from "@/lib/generated/prisma/client";
 import { NewTask } from "@/actions/add-tasks";
-
+import { deleteTask } from "@/actions/delete-task";
+import { toast } from "sonner";
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
   const [task, setTask] = useState<string>("");
+
   const handleGetTasks = async () => {
     try {
       const tasks = await getTasks();
@@ -42,6 +44,7 @@ const Home = () => {
       throw error;
     }
   };
+
   const handleAddTask = async () => {
     if (task.length === 0 || !task) {
       return;
@@ -49,8 +52,23 @@ const Home = () => {
     const myNewTask = await NewTask(task);
 
     if (!myNewTask) return;
+    setTask("");
+    toast.success("Atividade adicionada com sucesso!");
     await handleGetTasks();
   };
+
+  const handleDeleteTask = async (id: string) => {
+    try {
+      if (!id) return;
+      const deletedTask = await deleteTask(id);
+      if (!deletedTask) return;
+      toast.warning("Atividade deletada com sucesso!");
+      await handleGetTasks();
+    } catch (error) {
+      throw error;
+    }
+  };
+
   useEffect(() => {
     handleGetTasks();
   }, []);
@@ -61,6 +79,7 @@ const Home = () => {
           <Input
             placeholder="Adicionar tarefa"
             onChange={(e) => setTask(e.target.value)}
+            value={task}
           />
           <Button className="cursor-pointer" onClick={handleAddTask}>
             {" "}
@@ -97,7 +116,11 @@ const Home = () => {
                 <p className="flex-1 px-2 text-sm">{task.task}</p>
                 <div className="flex items-center gap-2">
                   <EditTask />
-                  <Trash size={16} className="cursor-pointer" />
+                  <Trash
+                    size={16}
+                    className="cursor-pointer"
+                    onClick={() => handleDeleteTask(task.id)}
+                  />
                 </div>
               </div>
             ))}
