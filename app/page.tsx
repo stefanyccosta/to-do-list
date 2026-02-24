@@ -28,13 +28,28 @@ import EditTask from "@/components/edit-task";
 import { getTasks } from "@/actions/get-tasks-from-db";
 import { useEffect, useState } from "react";
 import { Tasks } from "@/lib/generated/prisma/client";
+import { NewTask } from "@/actions/add-tasks";
 
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
+  const [task, setTask] = useState<string>("");
   const handleGetTasks = async () => {
-    const tasks = await getTasks();
-    if (!tasks) return;
-    setTaskList(tasks);
+    try {
+      const tasks = await getTasks();
+      if (!tasks) return;
+      setTaskList(tasks);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const handleAddTask = async () => {
+    if (task.length === 0 || !task) {
+      return;
+    }
+    const myNewTask = await NewTask(task);
+
+    if (!myNewTask) return;
+    await handleGetTasks();
   };
   useEffect(() => {
     handleGetTasks();
@@ -43,13 +58,16 @@ const Home = () => {
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg">
         <CardHeader className="flex gap-2">
-          <Input placeholder="Adicionar tarefa" />
-          <Button className="cursor-pointer">
+          <Input
+            placeholder="Adicionar tarefa"
+            onChange={(e) => setTask(e.target.value)}
+          />
+          <Button className="cursor-pointer" onClick={handleAddTask}>
             {" "}
             <Plus /> Adicionar
           </Button>
         </CardHeader>
-        <Button onClick={handleGetTasks}>Buscar Tarefas </Button>
+
         <CardContent>
           <Separator className="mb-4" />
           <div className="flex gap-2">
@@ -76,7 +94,7 @@ const Home = () => {
                 key={task.id}
               >
                 <div className="w-1 h-full bg-green-300"></div>
-                <p className="flex-1 px-2 text-sm"> Estudar React</p>
+                <p className="flex-1 px-2 text-sm">{task.task}</p>
                 <div className="flex items-center gap-2">
                   <EditTask />
                   <Trash size={16} className="cursor-pointer" />
