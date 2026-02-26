@@ -31,6 +31,7 @@ import { Tasks } from "@/lib/generated/prisma/client";
 import { NewTask } from "@/actions/add-tasks";
 import { deleteTask } from "@/actions/delete-task";
 import { toast } from "sonner";
+import { updateTaskStatus } from "@/actions/toggle-done";
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
   const [task, setTask] = useState<string>("");
@@ -65,6 +66,29 @@ const Home = () => {
       toast.warning("Atividade deletada com sucesso!");
       await handleGetTasks();
     } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleToggleTask = async (taskId: string) => {
+    const previousTasks = { ...taskList };
+    try {
+      setTaskList((prev) => {
+        const updateTaskList = prev.map((task) => {
+          if (task.id === taskId) {
+            return {
+              ...task,
+              done: !task.done,
+            };
+          } else {
+            return task;
+          }
+        });
+        return updateTaskList;
+      });
+      await updateTaskStatus(taskId);
+    } catch (error) {
+      setTaskList(previousTasks);
       throw error;
     }
   };
@@ -112,8 +136,15 @@ const Home = () => {
                 className="h-14 flex justify-between items-center border-t"
                 key={task.id}
               >
-                <div className="w-1 h-full bg-green-300"></div>
-                <p className="flex-1 px-2 text-sm">{task.task}</p>
+                <div
+                  className={`${task.done ? "w-1 h-full bg-green-300" : "w-1 h-full bg-red-400"}`}
+                ></div>
+                <p
+                  className="flex-1 px-2 text-sm cursor-pointer hover:text-gray-600"
+                  onClick={() => handleToggleTask(task.id)}
+                >
+                  {task.task}
+                </p>
                 <div className="flex items-center gap-2">
                   <EditTask />
                   <Trash
