@@ -32,6 +32,7 @@ import { NewTask } from "@/actions/add-tasks";
 import { deleteTask } from "@/actions/delete-task";
 import { toast } from "sonner";
 import { updateTaskStatus } from "@/actions/toggle-done";
+
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
   const [task, setTask] = useState<string>("");
@@ -74,7 +75,7 @@ const Home = () => {
     const previousTasks = { ...taskList };
     try {
       setTaskList((prev) => {
-        const updateTaskList = prev.map((task) => {
+        const updatedTaskList = prev.map((task) => {
           if (task.id === taskId) {
             return {
               ...task,
@@ -84,7 +85,7 @@ const Home = () => {
             return task;
           }
         });
-        return updateTaskList;
+        return updatedTaskList;
       });
       await updateTaskStatus(taskId);
     } catch (error) {
@@ -146,7 +147,7 @@ const Home = () => {
                   {task.task}
                 </p>
                 <div className="flex items-center gap-2">
-                  <EditTask />
+                  <EditTask task={task} handleGetTasks={handleGetTasks} />
                   <Trash
                     size={16}
                     className="cursor-pointer"
