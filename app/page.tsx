@@ -22,6 +22,7 @@ import {
   Trash,
   ListCheck,
   Sigma,
+  LoaderCircle,
 } from "lucide-react";
 
 import EditTask from "@/components/edit-task";
@@ -36,6 +37,7 @@ import { updateTaskStatus } from "@/actions/toggle-done";
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
   const [task, setTask] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGetTasks = async () => {
     try {
@@ -48,15 +50,24 @@ const Home = () => {
   };
 
   const handleAddTask = async () => {
-    if (task.length === 0 || !task) {
-      return;
-    }
-    const myNewTask = await NewTask(task);
+    setLoading(true);
+    try {
+      if (task.length === 0 || !task) {
+        toast.error("Insira uma atividade!");
+        setLoading(false);
+        return;
+      }
+      const myNewTask = await NewTask(task);
 
-    if (!myNewTask) return;
-    setTask("");
-    toast.success("Atividade adicionada com sucesso!");
-    await handleGetTasks();
+      if (!myNewTask) return;
+      setTask("");
+      toast.success("Atividade adicionada com sucesso!");
+
+      await handleGetTasks();
+    } catch (error) {
+      throw error;
+    }
+    setLoading(false);
   };
 
   const handleDeleteTask = async (id: string) => {
@@ -108,7 +119,8 @@ const Home = () => {
           />
           <Button className="cursor-pointer" onClick={handleAddTask}>
             {" "}
-            <Plus /> Adicionar
+            {loading ? <LoaderCircle className="animate-spin" /> : <Plus />}
+            Adicionar
           </Button>
         </CardHeader>
 
@@ -132,6 +144,12 @@ const Home = () => {
             </Badge>
           </div>
           <div className=" mt-4 border-b">
+            {taskList.length === 0 && (
+              <p className="text-xs border-t py-4">
+                {" "}
+                Vocẽ não possui nenhuma atividade cadastrada.
+              </p>
+            )}
             {taskList.map((task) => (
               <div
                 className="h-14 flex justify-between items-center border-t"
