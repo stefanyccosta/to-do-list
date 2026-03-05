@@ -9,22 +9,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
+import { Filter } from "@/components/filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import {
-  Plus,
-  List,
-  Check,
-  CircleAlert,
-  Trash,
-  ListCheck,
-  Sigma,
-  LoaderCircle,
-} from "lucide-react";
-
+import { Plus, Trash, ListCheck, Sigma, LoaderCircle } from "lucide-react";
 import EditTask from "@/components/edit-task";
 import { getTasks } from "@/actions/get-tasks-from-db";
 import { useEffect, useState } from "react";
@@ -33,11 +23,14 @@ import { NewTask } from "@/actions/add-tasks";
 import { deleteTask } from "@/actions/delete-task";
 import { toast } from "sonner";
 import { updateTaskStatus } from "@/actions/toggle-done";
+import { FilterType } from "@/components/filter";
 
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
   const [task, setTask] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentFilter, setCurrentFilter] = useState<FilterType>("all");
+  const [filteredTasks, setFilteredTasks] = useState<Tasks[]>([]);
 
   const handleGetTasks = async () => {
     try {
@@ -108,6 +101,22 @@ const Home = () => {
   useEffect(() => {
     handleGetTasks();
   }, []);
+  useEffect(() => {
+    switch (currentFilter) {
+      case "all":
+        setFilteredTasks(taskList);
+        break;
+      case "pending":
+        const pendingTasks = taskList.filter((task) => !task.done);
+        setFilteredTasks(pendingTasks);
+        break;
+      case "completed":
+        const completedTask = taskList.filter((task) => task.done);
+        setFilteredTasks(completedTask);
+        break;
+    }
+  }, [currentFilter, taskList]);
+
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg">
@@ -126,23 +135,10 @@ const Home = () => {
 
         <CardContent>
           <Separator className="mb-4" />
-          <div className="flex gap-2">
-            <Badge className="cursor-pointer" variant={"default"}>
-              {" "}
-              <List />
-              Todas
-            </Badge>
-            <Badge className="cursor-pointer" variant={"outline"}>
-              {" "}
-              <CircleAlert />
-              Não finalizadas
-            </Badge>
-            <Badge className="cursor-pointer" variant={"outline"}>
-              {" "}
-              <Check />
-              Concluídas
-            </Badge>
-          </div>
+          <Filter
+            currentFilter={currentFilter}
+            setCurrentFilter={setCurrentFilter}
+          />
           <div className=" mt-4 border-b">
             {taskList.length === 0 && (
               <p className="text-xs border-t py-4">
@@ -150,7 +146,7 @@ const Home = () => {
                 Vocẽ não possui nenhuma atividade cadastrada.
               </p>
             )}
-            {taskList.map((task) => (
+            {filteredTasks.map((task) => (
               <div
                 className="h-14 flex justify-between items-center border-t"
                 key={task.id}
