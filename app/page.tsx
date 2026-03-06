@@ -24,6 +24,7 @@ import { deleteTask } from "@/actions/delete-task";
 import { toast } from "sonner";
 import { updateTaskStatus } from "@/actions/toggle-done";
 import { FilterType } from "@/components/filter";
+import { deletedCompletedTasks } from "@/actions/clear-completed-tasks";
 
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
@@ -96,6 +97,11 @@ const Home = () => {
       setTaskList(previousTasks);
       throw error;
     }
+  };
+  const clearCompletedTasks = async () => {
+    const deletedTasks = await deletedCompletedTasks();
+    if (!deletedTasks) return;
+    setTaskList(deletedTasks);
   };
 
   useEffect(() => {
@@ -175,7 +181,10 @@ const Home = () => {
           <div className="flex justify-between mt-4">
             <div className="flex gap-2 items-center">
               <ListCheck size={20} />
-              <p className="text-xs">Tarefas concluídas (3/3)</p>
+              <p className="text-xs">
+                Tarefas concluídas (
+                {taskList.filter((task) => task.done).length}/{taskList.length})
+              </p>
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -194,8 +203,15 @@ const Home = () => {
                   </AlertDialogTitle>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction>Sim</AlertDialogAction>
+                  <AlertDialogAction
+                    className="cursor-pointer"
+                    onClick={clearCompletedTasks}
+                  >
+                    Sim
+                  </AlertDialogAction>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Cancelar
+                  </AlertDialogCancel>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -203,11 +219,13 @@ const Home = () => {
           <div className="h-2 w-full bg-gray-100 mt-4 rounded-md">
             <div
               className="h-full  bg-blue-500 rounded-md"
-              style={{ width: "50%" }}
+              style={{
+                width: `${(taskList.filter((task) => task.done).length / taskList.length) * 100}%`,
+              }}
             ></div>
             <div className="flex justify-end items-center mt-2 gap-2">
               <Sigma size={16} />
-              <p className="text-xs">3 tarefas no total</p>
+              <p className="text-xs">{taskList.length} tarefas no total</p>
             </div>
           </div>
         </CardContent>
